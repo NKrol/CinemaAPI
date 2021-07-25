@@ -82,6 +82,13 @@ namespace CinemaAPI
                     _context.Movies.AddRange(movies);
                     _context.SaveChanges();
                 }
+
+                if (!_context.Cinemas.Any())
+                {
+                    var cinemas = GetCinemas();
+                    _context.Cinemas.AddRange(cinemas);
+                    _context.SaveChanges();
+                }
             }
 
         }
@@ -132,6 +139,88 @@ namespace CinemaAPI
                 }
             };
             return movies;
+        }
+
+        private IEnumerable<Cinema> GetCinemas()
+        {
+            var movie = _context.Movies.FirstOrDefault(m => m.Id == 1);
+            var movie2 = _context.Movies.FirstOrDefault(m => m.Id == 2);
+            var movie3 = _context.Movies.FirstOrDefault(m => m.Id == 3);
+
+            var cinemas = new List<Cinema>()
+            {
+                new Cinema()
+                {
+                    Adress = new Adress()
+                    {
+                        Street = "Jana Pawła II",
+                        City = "Garwolin",
+                        PostalCode = "08-400"
+                    },
+                    Contact = new Contact()
+                    {
+                        Email = "testKino@123.com",
+                        PhoneNumber = "123123333"
+                    },
+                    Halls = new List<Hall>()
+                    {
+                        new Hall()
+                        {
+                            NameHall = "Orange",
+                            Number = 1,
+                            NumberOfSeats = 200
+                        },
+                        new Hall()
+                        {
+                            NameHall = "Red",
+                            Number = 2,
+                            NumberOfSeats = 200
+                        }
+                    },
+                    Movies = new List<Movie>()
+                    {
+                        movie, movie2
+                    },
+                    NameCinema = "Kino Wilga"
+
+                },
+                new Cinema()
+                {
+                    Adress = new Adress()
+                    {
+                        Street = "Al Kosciuszki 12",
+                        City = "Warszawa",
+                        PostalCode = "05-211"
+                    },
+                    Contact = new Contact()
+                    {
+                        Email = "KinoWarszawa@123.com",
+                        PhoneNumber = "666888777"
+                    },
+                    Halls = new List<Hall>()
+                    {
+                        new Hall()
+                        {
+                            NameHall = "Green",
+                            Number = 1,
+                            NumberOfSeats = 200
+                        },
+                        new Hall()
+                        {
+                            NameHall = "Dragon",
+                            Number = 2,
+                            NumberOfSeats = 200
+                        }
+                    },
+                    Movies = new List<Movie>()
+                    {
+                        movie
+                    },
+                    NameCinema = "Multi Kino"
+                }
+            };
+
+            return cinemas;
         }
     }
 }

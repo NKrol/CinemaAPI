@@ -15,5 +15,8 @@ namespace CinemaAPI.Entities
         public virtual Emission Emission { get; set; }
         public virtual List<KindOfMovie> KindOfMovies { get; set; }
         public DateTime PremiereDate { get; set; }
+
+
+        public virtual List<Cinema> Cinemas { get; set; }
     }
 }

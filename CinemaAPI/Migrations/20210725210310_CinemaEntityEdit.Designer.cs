@@ -4,14 +4,16 @@ using CinemaAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CinemaAPI.Migrations
 {
     [DbContext(typeof(CinemaDbContext))]
-    partial class CinemaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210725210310_CinemaEntityEdit")]
+    partial class CinemaEntityEdit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,6 +197,9 @@ namespace CinemaAPI.Migrations
                     b.Property<int?>("AgeId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CinemaId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("DirectorId")
                         .HasColumnType("int");
 
@@ -211,6 +216,8 @@ namespace CinemaAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AgeId");
+
+                    b.HasIndex("CinemaId");
 
                     b.HasIndex("DirectorId");
 
@@ -266,21 +273,6 @@ namespace CinemaAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Types");
-                });
-
-            modelBuilder.Entity("CinemaMovie", b =>
-                {
-                    b.Property<int>("CinemasId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MoviesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CinemasId", "MoviesId");
-
-                    b.HasIndex("MoviesId");
-
-                    b.ToTable("CinemaMovie");
                 });
 
             modelBuilder.Entity("KindOfMovieMovie", b =>
@@ -341,6 +333,10 @@ namespace CinemaAPI.Migrations
                         .WithMany("Movies")
                         .HasForeignKey("AgeId");
 
+                    b.HasOne("CinemaAPI.Entities.Cinema", null)
+                        .WithMany("Movies")
+                        .HasForeignKey("CinemaId");
+
                     b.HasOne("CinemaAPI.Entities.Director", "Director")
                         .WithMany("Movies")
                         .HasForeignKey("DirectorId");
@@ -375,21 +371,6 @@ namespace CinemaAPI.Migrations
                     b.Navigation("Hall");
 
                     b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("CinemaMovie", b =>
-                {
-                    b.HasOne("CinemaAPI.Entities.Cinema", null)
-                        .WithMany()
-                        .HasForeignKey("CinemasId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CinemaAPI.Entities.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("MoviesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("KindOfMovieMovie", b =>
@@ -430,6 +411,8 @@ namespace CinemaAPI.Migrations
             modelBuilder.Entity("CinemaAPI.Entities.Cinema", b =>
                 {
                     b.Navigation("Halls");
+
+                    b.Navigation("Movies");
                 });
 
             modelBuilder.Entity("CinemaAPI.Entities.Director", b =>

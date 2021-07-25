@@ -40,6 +40,21 @@ namespace CinemaAPI.Controllers
 
             return Ok();
         }
+        [HttpPut("addmovietocinema/{id}")]
+        public ActionResult AddMovieToCinema([FromRoute] int id, [FromBody] MovieDto dto)
+        {
+            _cinemaServices.AddMovieToCinema(id, dto);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] int id)
+        {
+            _cinemaServices.Delete(id);
+
+            return Ok();
+        }
 
     }
 }

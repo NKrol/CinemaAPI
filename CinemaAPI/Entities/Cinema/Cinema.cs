@@ -12,5 +12,6 @@ namespace CinemaAPI.Entities
         public virtual Adress Adress { get; set; }
         public virtual Contact Contact { get; set; }
         public virtual List<Hall> Halls { get; set; }
+        public virtual List<Movie> Movies { get; set; }
     }
 }
