@@ -36,6 +36,7 @@ namespace CinemaAPI
             services.AddDbContext<CinemaDbContext>();
             services.AddScoped<CinemaSeeder>();
             services.AddScoped<ICinemaServices, CinemaServices>();
+            services.AddScoped<IMovieService, MovieService>();
             services.AddAutoMapper(this.GetType().Assembly);
         }
 

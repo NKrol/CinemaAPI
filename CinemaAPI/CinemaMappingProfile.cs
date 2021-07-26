@@ -42,9 +42,17 @@ namespace CinemaAPI
                 .ForMember(c => c.Director, s => s.MapFrom(m => new Director(){FirstName = m.DirectorFirstName, LastName = m.DirectorLastName}))
                 .ForMember(c => c.KindOfMovies, s => s.MapFrom(m => new List<KindOfMovie>(){new KindOfMovie(){Projections = m.ProjectionName}}))
                 .ForMember(c => c.Types, s => s.MapFrom(m => new List<Entities.Type>(){new Entities.Type(){NameType = m.Types1}}));
+
             CreateMap<EditMovieDto, Movie>()
                 .ForMember(e => e.Age, s=> s.MapFrom(m => new Age(){AgeRange = m.Age}))
                 .ForMember(e => e.Emission, s => s.MapFrom(m => new Emission(){StateOfIssue = m.Emission}));
+
+
+            CreateMap<Cinema, CinemaDto>()
+                .ForMember(d => d.City, s => s.MapFrom(c => c.Adress.City))
+                .ForMember(d => d.Street, s => s.MapFrom(c => c.Adress.Street))
+                .ForMember(d => d.Movies, s => s.MapFrom(c => c.Movies.Count))
+                .ForMember(d => d.Halls, s => s.MapFrom(c => c.Halls.Count));
 
         }
     }
