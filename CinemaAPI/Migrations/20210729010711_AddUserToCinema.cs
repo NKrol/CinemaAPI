@@ -2,26 +2,26 @@
 
 namespace CinemaAPI.Migrations
 {
-    public partial class CinemaEntityEdit : Migration
+    public partial class AddUserToCinema : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "CinemaId",
-                table: "Movies",
+                name: "CreatedById",
+                table: "Cinemas",
                 type: "int",
                 nullable: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Movies_CinemaId",
-                table: "Movies",
-                column: "CinemaId");
+                name: "IX_Cinemas_CreatedById",
+                table: "Cinemas",
+                column: "CreatedById");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Movies_Cinemas_CinemaId",
-                table: "Movies",
-                column: "CinemaId",
-                principalTable: "Cinemas",
+                name: "FK_Cinemas_Users_CreatedById",
+                table: "Cinemas",
+                column: "CreatedById",
+                principalTable: "Users",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
         }
@@ -29,16 +29,16 @@ namespace CinemaAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Movies_Cinemas_CinemaId",
-                table: "Movies");
+                name: "FK_Cinemas_Users_CreatedById",
+                table: "Cinemas");
 
             migrationBuilder.DropIndex(
-                name: "IX_Movies_CinemaId",
-                table: "Movies");
+                name: "IX_Cinemas_CreatedById",
+                table: "Cinemas");
 
             migrationBuilder.DropColumn(
-                name: "CinemaId",
-                table: "Movies");
+                name: "CreatedById",
+                table: "Cinemas");
         }
     }
 }

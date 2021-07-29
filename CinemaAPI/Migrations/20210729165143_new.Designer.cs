@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaAPI.Migrations
 {
     [DbContext(typeof(CinemaDbContext))]
-    [Migration("20210725210310_CinemaEntityEdit")]
-    partial class CinemaEntityEdit
+    [Migration("20210729165143_new")]
+    partial class @new
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -70,6 +70,9 @@ namespace CinemaAPI.Migrations
                     b.Property<int?>("ContactId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<string>("NameCinema")
                         .HasColumnType("nvarchar(max)");
 
@@ -78,6 +81,8 @@ namespace CinemaAPI.Migrations
                     b.HasIndex("AdressId");
 
                     b.HasIndex("ContactId");
+
+                    b.HasIndex("CreatedById");
 
                     b.ToTable("Cinemas");
                 });
@@ -158,6 +163,9 @@ namespace CinemaAPI.Migrations
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CinemaId");
@@ -197,9 +205,6 @@ namespace CinemaAPI.Migrations
                     b.Property<int?>("AgeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CinemaId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("DirectorId")
                         .HasColumnType("int");
 
@@ -216,8 +221,6 @@ namespace CinemaAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AgeId");
-
-                    b.HasIndex("CinemaId");
 
                     b.HasIndex("DirectorId");
 
@@ -275,6 +278,89 @@ namespace CinemaAPI.Migrations
                     b.ToTable("Types");
                 });
 
+            modelBuilder.Entity("CinemaAPI.Entities.Users.DetailsAccount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DateOfBirth")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nationality")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DetailsAccounts");
+                });
+
+            modelBuilder.Entity("CinemaAPI.Entities.Users.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("CinemaAPI.Entities.Users.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("DetailsAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DetailsAccountId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CinemaMovie", b =>
+                {
+                    b.Property<int>("CinemasId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MoviesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CinemasId", "MoviesId");
+
+                    b.HasIndex("MoviesId");
+
+                    b.ToTable("CinemaMovie");
+                });
+
             modelBuilder.Entity("KindOfMovieMovie", b =>
                 {
                     b.Property<int>("KindOfMoviesId")
@@ -315,9 +401,15 @@ namespace CinemaAPI.Migrations
                         .WithMany()
                         .HasForeignKey("ContactId");
 
+                    b.HasOne("CinemaAPI.Entities.Users.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
                     b.Navigation("Adress");
 
                     b.Navigation("Contact");
+
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("CinemaAPI.Entities.Hall", b =>
@@ -332,10 +424,6 @@ namespace CinemaAPI.Migrations
                     b.HasOne("CinemaAPI.Entities.Age", "Age")
                         .WithMany("Movies")
                         .HasForeignKey("AgeId");
-
-                    b.HasOne("CinemaAPI.Entities.Cinema", null)
-                        .WithMany("Movies")
-                        .HasForeignKey("CinemaId");
 
                     b.HasOne("CinemaAPI.Entities.Director", "Director")
                         .WithMany("Movies")
@@ -371,6 +459,38 @@ namespace CinemaAPI.Migrations
                     b.Navigation("Hall");
 
                     b.Navigation("Movie");
+                });
+
+            modelBuilder.Entity("CinemaAPI.Entities.Users.User", b =>
+                {
+                    b.HasOne("CinemaAPI.Entities.Users.DetailsAccount", "DetailsAccount")
+                        .WithMany()
+                        .HasForeignKey("DetailsAccountId");
+
+                    b.HasOne("CinemaAPI.Entities.Users.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DetailsAccount");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("CinemaMovie", b =>
+                {
+                    b.HasOne("CinemaAPI.Entities.Cinema", null)
+                        .WithMany()
+                        .HasForeignKey("CinemasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CinemaAPI.Entities.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MoviesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("KindOfMovieMovie", b =>
@@ -411,8 +531,6 @@ namespace CinemaAPI.Migrations
             modelBuilder.Entity("CinemaAPI.Entities.Cinema", b =>
                 {
                     b.Navigation("Halls");
-
-                    b.Navigation("Movies");
                 });
 
             modelBuilder.Entity("CinemaAPI.Entities.Director", b =>

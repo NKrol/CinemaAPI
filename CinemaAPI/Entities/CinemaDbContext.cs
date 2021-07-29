@@ -2,16 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
+using CinemaAPI.Entities.Users;
 
 namespace CinemaAPI.Entities
 {
     public class CinemaDbContext : DbContext
     {
-        private readonly string _connectionString =
-            "Data Source=192.168.239.129,1433;Database=CinemaNewDb;User ID=emergency;Password=Bercik1267@";
+        //private readonly string _connectionString =
+        //    "Data Source=192.168.239.129,1433;Database=CinemaNewDb;User ID=emergency;Password=Bercik1267@";
+        private readonly string _connectionString = "Server=localhost;Database=CinemaNewDb;Trusted_Connection=True;";
 
-        
+
 
         public DbSet<KindOfMovie> KindOfMovies { get; set; }
         public DbSet<Emission> Emissions { get; set; }
@@ -24,6 +27,9 @@ namespace CinemaAPI.Entities
         public DbSet<Hall> Halls { get; set; }
         public DbSet<Cinema> Cinemas { get; set; }
         public DbSet<Showing> Showings { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<DetailsAccount> DetailsAccounts { get; set; }
+        public DbSet<User> Users { get; set; }
 
 
 
@@ -56,6 +62,14 @@ namespace CinemaAPI.Entities
             modelBuilder.Entity<Movie>()
                 .Property(m => m.Title)
                 .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.Email)
+                .IsRequired();
+            
+                
+
+            
 
 
         }

@@ -54,6 +54,27 @@ namespace CinemaAPI
                 .ForMember(d => d.Movies, s => s.MapFrom(c => c.Movies.Count))
                 .ForMember(d => d.Halls, s => s.MapFrom(c => c.Halls.Count));
 
+            CreateMap<Hall, HallDto>();
+
+            CreateMap<UpdateCinemaDto, Cinema>();
+
+            CreateMap<CreateCinemaDto, Cinema>()
+                .ForMember(c => c.Adress, s => s.MapFrom(cc => new Adress()
+                {
+                    City = cc.City,
+                    PostalCode = cc.PostalCode,
+                    Street = cc.PostalCode
+                }))
+                .ForMember(c => c.Contact, s => s.MapFrom(cc => new Contact()
+                {
+                    Email = cc.Email,
+                    PhoneNumber = cc.PhoneNumber
+                }));
+
+            CreateMap<Adress, AdressDto>();
+
+            CreateMap<Contact, ContactDto>();
+            
         }
     }
 }

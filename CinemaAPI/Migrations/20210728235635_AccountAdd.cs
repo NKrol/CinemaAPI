@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CinemaAPI.Migrations
 {
-    public partial class Init1 : Migration
+    public partial class AccountAdd : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -50,6 +50,22 @@ namespace CinemaAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DetailsAccounts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Nationality = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DetailsAccounts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Directors",
                 columns: table => new
                 {
@@ -89,6 +105,19 @@ namespace CinemaAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_KindOfMovies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,6 +196,34 @@ namespace CinemaAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    DetailsAccountId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_DetailsAccounts_DetailsAccountId",
+                        column: x => x.DetailsAccountId,
+                        principalTable: "DetailsAccounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Users_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Halls",
                 columns: table => new
                 {
@@ -175,6 +232,7 @@ namespace CinemaAPI.Migrations
                     NameHall = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Number = table.Column<int>(type: "int", nullable: false),
                     NumberOfSeats = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CinemaId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -185,7 +243,31 @@ namespace CinemaAPI.Migrations
                         column: x => x.CinemaId,
                         principalTable: "Cinemas",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CinemaMovie",
+                columns: table => new
+                {
+                    CinemasId = table.Column<int>(type: "int", nullable: false),
+                    MoviesId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CinemaMovie", x => new { x.CinemasId, x.MoviesId });
+                    table.ForeignKey(
+                        name: "FK_CinemaMovie_Cinemas_CinemasId",
+                        column: x => x.CinemasId,
+                        principalTable: "Cinemas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CinemaMovie_Movies_MoviesId",
+                        column: x => x.MoviesId,
+                        principalTable: "Movies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -272,6 +354,11 @@ namespace CinemaAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_CinemaMovie_MoviesId",
+                table: "CinemaMovie",
+                column: "MoviesId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Cinemas_AdressId",
                 table: "Cinemas",
                 column: "AdressId");
@@ -325,10 +412,23 @@ namespace CinemaAPI.Migrations
                 name: "IX_Showings_MovieId",
                 table: "Showings",
                 column: "MovieId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_DetailsAccountId",
+                table: "Users",
+                column: "DetailsAccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_RoleId",
+                table: "Users",
+                column: "RoleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CinemaMovie");
+
             migrationBuilder.DropTable(
                 name: "KindOfMovieMovie");
 
@@ -337,6 +437,9 @@ namespace CinemaAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Showings");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "KindOfMovies");
@@ -349,6 +452,12 @@ namespace CinemaAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Movies");
+
+            migrationBuilder.DropTable(
+                name: "DetailsAccounts");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Cinemas");

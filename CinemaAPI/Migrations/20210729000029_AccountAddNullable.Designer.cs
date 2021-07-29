@@ -4,14 +4,16 @@ using CinemaAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CinemaAPI.Migrations
 {
     [DbContext(typeof(CinemaDbContext))]
-    partial class CinemaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210729000029_AccountAddNullable")]
+    partial class AccountAddNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,9 +70,6 @@ namespace CinemaAPI.Migrations
                     b.Property<int?>("ContactId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
                     b.Property<string>("NameCinema")
                         .HasColumnType("nvarchar(max)");
 
@@ -79,8 +78,6 @@ namespace CinemaAPI.Migrations
                     b.HasIndex("AdressId");
 
                     b.HasIndex("ContactId");
-
-                    b.HasIndex("CreatedById");
 
                     b.ToTable("Cinemas");
                 });
@@ -399,15 +396,9 @@ namespace CinemaAPI.Migrations
                         .WithMany()
                         .HasForeignKey("ContactId");
 
-                    b.HasOne("CinemaAPI.Entities.Users.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
                     b.Navigation("Adress");
 
                     b.Navigation("Contact");
-
-                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("CinemaAPI.Entities.Hall", b =>

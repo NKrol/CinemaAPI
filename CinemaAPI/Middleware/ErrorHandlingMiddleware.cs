@@ -20,6 +20,15 @@ namespace CinemaAPI.Middleware
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(notFoundException.Message);
             }
+            catch (ForbidException forbidException)
+            {
+                context.Response.StatusCode = 403;
+            }
+            catch (Exception exception)
+            {
+                context.Response.StatusCode = 500;
+                await context.Response.WriteAsync("Something went wrong, sorry!");
+            }
         }
     }
 }

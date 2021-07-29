@@ -1,6 +1,11 @@
-﻿namespace CinemaAPI.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace CinemaAPI.Models
 {
-    public class Hall
+    public class HallDto
     {
         public int Id { get; set; }
         public string NameHall { get; set; }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CinemaAPI.Entities.Users;
 
 namespace CinemaAPI
 {
@@ -89,9 +90,38 @@ namespace CinemaAPI
                     _context.Cinemas.AddRange(cinemas);
                     _context.SaveChanges();
                 }
+
+                if (!_context.Roles.Any())
+                {
+                    var roles = GetRoles();
+                    _context.Roles.AddRange(roles);
+                    _context.SaveChanges();
+                }
             }
 
         }
+
+        private IEnumerable<Role> GetRoles()
+        {
+            var roles = new List<Role>()
+            {
+                new Role()
+                {
+                    Name = "User"
+                },
+                new Role()
+                {
+                    Name = "Cinema manager"
+                },
+                new Role()
+                {
+                    Name = "Admin"
+                }
+            };
+
+            return roles;
+        }
+
 
         private IEnumerable<Movie> GetMovies()
         {

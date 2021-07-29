@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using CinemaAPI.Entities;
@@ -15,8 +16,9 @@ namespace CinemaAPI.Services
         IEnumerable<MovieDto> GetAll();
         void AddMovie(CreateMovieDto dto);
         void EditMovie(int id, EditMovieDto dto);
-        void AddMovieToCinema(int id, MovieDto dto);
+        public void AddMovieToCinema(int cinemaId, int movieId);
         void Delete(int id);
+        public MovieDto GetById(int id);
     }
 
     public class MovieService : IMovieService
@@ -53,8 +55,9 @@ namespace CinemaAPI.Services
             var kindOfMovie = _dbContext.KindOfMovies.FirstOrDefault(e => e.Projections.Equals(dto.ProjectionName));
 
             newMovie.Director = director ?? newMovie.Director;
-            newMovie.Types = new List<Entities.Type>() { type } ?? newMovie.Types;
-            newMovie.KindOfMovies = new List<KindOfMovie>() { kindOfMovie } ?? newMovie.KindOfMovies;
+            newMovie.Types = type is null ? new List<Entities.Type>(){new Entities.Type(){NameType = dto.Types1}} : new List<Entities.Type>(){type};
+            
+            newMovie.KindOfMovies = kindOfMovie is null ? new List<KindOfMovie>() { new KindOfMovie(){Projections = dto.ProjectionName}} : new List<KindOfMovie>(){kindOfMovie};
 
             _dbContext.Movies.Add(newMovie);
             _dbContext.SaveChanges();
@@ -88,15 +91,15 @@ namespace CinemaAPI.Services
 
         }
 
-        public void AddMovieToCinema(int id, MovieDto dto)
+        public void AddMovieToCinema(int cinemaId, int movieId)
         {
-            var cinema = _dbContext.Cinemas.FirstOrDefault(c => c.Id == id);
+            var cinema = _dbContext.Cinemas.FirstOrDefault(c => c.Id == cinemaId);
             if (cinema is null)
             {
                 throw new NotFoundException("Can't find this cinema!");
             }
 
-            var film = _dbContext.Movies.FirstOrDefault(f => f.Id == dto.Id);
+            var film = _dbContext.Movies.FirstOrDefault(f => f.Id == movieId);
             if (film is null)
             {
                 throw new NotFoundException("Not found this film");
@@ -122,6 +125,22 @@ namespace CinemaAPI.Services
             _dbContext.SaveChanges();
 
 
+        }
+
+        public MovieDto GetById(int id)
+        {
+            var movie = _dbContext.Movies
+                .Include(m => m.Age)
+                .Include(m => m.Director)
+                .Include(m => m.Emission)
+                .Include(m => m.KindOfMovies)
+                .Include(m => m.Types)
+                .FirstOrDefault(m => m.Id == id);
+            if (movie is null) throw new NotFoundException("Movie not found!");
+
+            var movieDto = _mapper.Map<MovieDto>(movie);
+
+            return movieDto;
         }
     }
 }
