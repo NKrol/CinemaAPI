@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
@@ -10,11 +11,10 @@ namespace CinemaAPI.Entities
 {
     public class CinemaDbContext : DbContext
     {
-        //private readonly string _connectionString =
-        //    "Data Source=192.168.239.129,1433;Database=CinemaNewDb;User ID=emergency;Password=Bercik1267@";
-        private readonly string _connectionString = "Server=localhost;Database=CinemaNewDb;Trusted_Connection=True;";
 
+        private readonly string _connectionString;
 
+        
 
         public DbSet<KindOfMovie> KindOfMovies { get; set; }
         public DbSet<Emission> Emissions { get; set; }
@@ -32,7 +32,10 @@ namespace CinemaAPI.Entities
         public DbSet<User> Users { get; set; }
 
 
-
+        public CinemaDbContext(Connection connectionString)
+        {
+            _connectionString = connectionString.ConnectionString;
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

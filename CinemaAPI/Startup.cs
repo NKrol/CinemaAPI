@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,10 +38,17 @@ namespace CinemaAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connectionString = new Connection();
+
+            Configuration.GetSection("ConnectionStrings").Bind(connectionString);
+            
+
             var authenticationSettings = new AuthenticationSettings();
 
             Configuration.GetSection("Authentication").Bind(authenticationSettings);
 
+
+            services.AddSingleton(connectionString);
             services.AddSingleton(authenticationSettings);
             services.AddAuthentication(option =>
             {
@@ -105,9 +113,7 @@ namespace CinemaAPI
             app.UseStaticFiles();
 
             app.UseRouting();
-
             
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
